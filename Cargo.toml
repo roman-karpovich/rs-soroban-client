@@ -14,7 +14,7 @@ authors = ["Rahul Soshte <rahul.soshte47@gmail.com>"]
 
 [dependencies]
 # Temporary until the companion stellar-baselib 0.7.0 release is published.
-stellar-baselib = { version = "0.7.0", git = "https://github.com/roman-karpovich/rs-stellar-base", rev = "64241f8e1fb46d75adfa638fb5fc8f1e346ea9a8" }
+stellar-baselib = { version = "0.7.0", git = "https://github.com/roman-karpovich/rs-stellar-base", rev = "8791d6d631ddb00837dd832af103d20fcc5bff85" }
 tokio = { version = "1.43.0", features = ["time"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
