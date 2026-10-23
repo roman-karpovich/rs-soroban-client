@@ -9,7 +9,8 @@
 
 A Rust client library for interacting with Soroban smart contracts on the Stellar blockchain
 
-**This project is currently in production and is compatible with Protocol 28 and you can use it for building and signing transactions that involve interacting with Soroban and also supports all stellar classic operations.**
+Supports Protocol 30 XDR for Soroban and Stellar classic operations. This branch
+prepares the unreleased 0.7.0 compatibility update.
 
 ## Quickstart
 
@@ -17,7 +18,7 @@ Add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-soroban-client = "0.6.0"
+soroban-client = "0.7.0"
 ```
 
 And this to your code:
@@ -25,6 +26,28 @@ And this to your code:
 ```rust
 use soroban_client::*;
 ```
+
+## Protocol 30 migration
+
+- Requires Rust 1.87 or newer and `stellar-baselib 0.7` with XDR 30.
+- `LedgerInfo::to_header` and `to_metadata` decode the CAP-88 millisecond
+  extensions. Existing close-time fields and transaction time bounds keep
+  their whole-second semantics.
+- The re-exported `Address` supports W-addresses (CAP-84), including values
+  returned in events. W-addresses are transfer destinations, not contracts to
+  invoke, auth signers, or storage keys. `get_contract_data` rejects muxed
+  storage owners and keys, including addresses nested in vectors/maps.
+- `EventResponse::in_successful_contract_call` is now `Option<bool>`:
+  older RPC responses preserve `Some(true/false)`; RPC 30 omits the field,
+  producing `None`. Use `== Some(true)` only when the legacy flag matters.
+- SAC transfer/mint event destinations remain the base C-address plus the
+  existing `to_muxed_id` data field, as with muxed accounts.
+- `use_upgraded_auth` remains supported by RPC 30 and keeps its existing
+  behavior; no auth-default changes are required for this update.
+
+This branch temporarily depends on the companion stellar-baselib fork. After
+the upstream 0.7.0 release, replace that Git dependency with `stellar-baselib =
+"0.7.0"`. The quickstart version is not published until the release.
 
 ## Crate Docs
 

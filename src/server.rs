@@ -22,6 +22,18 @@ use tokio::time::{sleep, Instant};
 /// The default transaction submission timeout for RPC requests, in milliseconds.
 pub const SUBMIT_TRANSACTION_TIMEOUT: u32 = 60 * 1000;
 
+// Muxed addresses are accepted as transfer arguments, never in storage keys.
+fn contains_muxed_address(value: &ScVal) -> bool {
+    match value {
+        ScVal::Address(ScAddress::MuxedAccount(_) | ScAddress::MuxedContract(_)) => true,
+        ScVal::Vec(Some(values)) => values.iter().any(contains_muxed_address),
+        ScVal::Map(Some(entries)) => entries
+            .iter()
+            .any(|entry| contains_muxed_address(&entry.key) || contains_muxed_address(&entry.val)),
+        _ => false,
+    }
+}
+
 /// Representation of the ledger entry durability to be used with [Server::get_contract_data]
 #[derive(Debug, PartialEq, Eq)]
 pub enum Durability {
@@ -675,6 +687,10 @@ impl Server {
             .map_err(|_| Error::ContractDataNotFound)?
             .to_sc_address()
             .map_err(|_| Error::ContractDataNotFound)?;
+
+        if !matches!(sc_address, ScAddress::Contract(_)) || contains_muxed_address(&key) {
+            return Err(Error::ContractDataNotFound);
+        }
 
         let contract_key = LedgerKey::ContractData(LedgerKeyContractData {
             key: key.clone(),

@@ -1761,10 +1761,7 @@ async fn get_contract_wasm_by_contract_id_external_ref() {
     use wiremock::{Mock, MockServer, ResponseTemplate};
 
     let contract_id = "CASCBLTYELLTOIMRSG2BRJ3XN3J3WB4J7JEUHCH4RLSNL3XLWCNGRTCR";
-    let contract_sc = Address::new(contract_id)
-        .unwrap()
-        .to_sc_address()
-        .unwrap();
+    let contract_sc = Address::new(contract_id).unwrap().to_sc_address().unwrap();
     let owner = "CCJZ5DGASBWQXR5MPFCJXMBI333XE5U3FSJTNQU7RIKE3P5GN2K2WYD5";
     let owner_sc = Address::new(owner).unwrap().to_sc_address().unwrap();
     let tag = ScString("my-code".try_into().unwrap());
@@ -2864,7 +2861,7 @@ async fn get_transactions() {
         }) = ts[0].to_envelope().unwrap()
         {
             if let stellar_baselib::xdr::Memo::Text(text) = tx.memo {
-                assert_eq!(text, "wallet:1712906336510".try_into().unwrap());
+                assert_eq!(text.as_slice(), b"wallet:1712906336510");
             } else {
                 panic!("No memo")
             }
