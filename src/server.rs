@@ -179,8 +179,8 @@ pub struct SimulationOptions {
     /// `ENVELOPE_TYPE_SOROBAN_AUTHORIZATION` will produce signatures the host
     /// rejects, so audit it before relying on the default.
     ///
-    /// This flag is transitional: the RPC plans to return v2 by default in
-    /// Protocol 29 and to drop the flag in Protocol 30.
+    /// This flag is transitional. RPC 30 still accepts it, including the
+    /// explicit legacy opt-out, but a future RPC release may remove it.
     ///
     /// [SorobanCredentials::Address]: stellar_baselib::xdr::SorobanCredentials::Address
     /// [SorobanCredentials::AddressV2]: stellar_baselib::xdr::SorobanCredentials::AddressV2
